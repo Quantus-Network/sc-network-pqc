@@ -30,7 +30,6 @@ use libp2p::{
         Behaviour as Identify, Config as IdentifyConfig, Event as IdentifyEvent,
         Info as IdentifyInfo,
     },
-    identity::PublicKey,
     ping::{Behaviour as Ping, Config as PingConfig, Event as PingEvent},
     swarm::{
         behaviour::{
@@ -43,6 +42,7 @@ use libp2p::{
     },
     Multiaddr, PeerId,
 };
+use libp2p_identity::PublicKey;
 use log::{debug, error, trace};
 use parking_lot::Mutex;
 use smallvec::SmallVec;

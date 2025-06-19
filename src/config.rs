@@ -292,19 +292,25 @@ impl NonReservedPeerMode {
 /// and how it is obtained. A node's identity keypair is the result of
 /// the evaluation of the node key configuration.
 #[derive(Clone, Debug)]
+/// Node key configuration.
 pub enum NodeKeyConfig {
     /// A Ed25519 secret key configuration.
     Ed25519(Secret<ed25519::SecretKey>),
+    /// A Dilithium (Post-Quantum) secret key configuration.
+    Dilithium(Secret<Vec<u8>>),
 }
 
 impl Default for NodeKeyConfig {
     fn default() -> NodeKeyConfig {
-        Self::Ed25519(Secret::New)
+        Self::Dilithium(Secret::New)
     }
 }
 
 /// The options for obtaining a Ed25519 secret key.
 pub type Ed25519Secret = Secret<ed25519::SecretKey>;
+
+/// The options for obtaining a Dilithium secret key.
+pub type DilithiumSecret = Secret<Vec<u8>>;
 
 /// The configuration options for obtaining a secret key `K`.
 #[derive(Clone)]
@@ -332,6 +338,21 @@ impl<K> fmt::Debug for Secret<K> {
 }
 
 impl NodeKeyConfig {
+    /// Create a new Ed25519 node key configuration.
+    pub fn ed25519(secret: Ed25519Secret) -> Self {
+        NodeKeyConfig::Ed25519(secret)
+    }
+
+    /// Create a new Dilithium (Post-Quantum) node key configuration.
+    pub fn dilithium(secret: DilithiumSecret) -> Self {
+        NodeKeyConfig::Dilithium(secret)
+    }
+
+    /// Create a new random Dilithium (Post-Quantum) keypair.
+    pub fn new_dilithium() -> Self {
+        NodeKeyConfig::Dilithium(Secret::New)
+    }
+
     /// Evaluate a `NodeKeyConfig` to obtain an identity `Keypair`:
     ///
     ///  * If the secret is configured as input, the corresponding keypair is returned.
@@ -342,12 +363,17 @@ impl NodeKeyConfig {
     ///
     ///  * If the secret is configured to be new, it is generated and the corresponding keypair is
     ///    returned.
-    pub fn into_keypair(self) -> io::Result<ed25519::Keypair> {
+    pub fn into_keypair(self) -> io::Result<libp2p_identity::Keypair> {
         use NodeKeyConfig::*;
         match self {
-            Ed25519(Secret::New) => Ok(ed25519::Keypair::generate()),
+            Ed25519(Secret::New) => Ok(libp2p_identity::Keypair::generate_ed25519()),
 
-            Ed25519(Secret::Input(k)) => Ok(ed25519::Keypair::from(k).into()),
+            Ed25519(Secret::Input(k)) => {
+                let keypair = ed25519::Keypair::from(k);
+                Ok(libp2p_identity::Keypair::from(
+                    libp2p_identity::ed25519::Keypair::from(keypair),
+                ))
+            }
 
             Ed25519(Secret::File(f)) => get_secret(
                 f,
@@ -364,7 +390,29 @@ impl NodeKeyConfig {
                 ed25519::SecretKey::generate,
                 |b| b.as_ref().to_vec(),
             )
-            .map(ed25519::Keypair::from),
+            .map(|sk| {
+                libp2p_identity::Keypair::from(libp2p_identity::ed25519::Keypair::from(
+                    ed25519::Keypair::from(sk),
+                ))
+            }),
+
+            Dilithium(Secret::New) => Ok(libp2p_identity::Keypair::generate_dilithium()),
+
+            Dilithium(Secret::Input(k)) => libp2p_identity::Keypair::from_protobuf_encoding(&k)
+                .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e)),
+
+            Dilithium(Secret::File(f)) => {
+                let secret = get_secret(
+                    f,
+                    |b| {
+                        libp2p_identity::Keypair::from_protobuf_encoding(b)
+                            .map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
+                    },
+                    || libp2p_identity::Keypair::generate_dilithium(),
+                    |kp| kp.to_protobuf_encoding().unwrap(),
+                );
+                secret
+            },
         }
     }
 }
@@ -965,6 +1013,7 @@ pub enum NetworkBackendType {
 
 #[cfg(test)]
 mod tests {
+    use libp2p::identity::Keypair;
     use super::*;
     use tempfile::TempDir;
 
@@ -972,8 +1021,8 @@ mod tests {
         tempfile::Builder::new().prefix(prefix).tempdir().unwrap()
     }
 
-    fn secret_bytes(kp: ed25519::Keypair) -> Vec<u8> {
-        kp.secret().to_bytes().into()
+    fn secret_bytes(kp: Keypair) -> Vec<u8> {
+        kp.secret().unwrap()
     }
 
     #[test]
@@ -1007,5 +1056,16 @@ mod tests {
         let kp1 = NodeKeyConfig::Ed25519(Secret::New).into_keypair().unwrap();
         let kp2 = NodeKeyConfig::Ed25519(Secret::New).into_keypair().unwrap();
         assert!(secret_bytes(kp1) != secret_bytes(kp2));
+    }
+
+    #[test]
+    fn test_dilithium_keypair_generation() {
+        let kp1 = NodeKeyConfig::new_dilithium().into_keypair().unwrap();
+        let kp2 = NodeKeyConfig::new_dilithium().into_keypair().unwrap();
+        // Dilithium keypairs should be different
+        assert!(kp1.to_protobuf_encoding().unwrap() != kp2.to_protobuf_encoding().unwrap());
+        // Both should be Dilithium type
+        assert_eq!(kp1.key_type(), libp2p_identity::KeyType::Dilithium);
+        assert_eq!(kp2.key_type(), libp2p_identity::KeyType::Dilithium);
     }
 }

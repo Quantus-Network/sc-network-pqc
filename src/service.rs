@@ -67,7 +67,6 @@ use libp2p::{
     connection_limits::{ConnectionLimits, Exceeded},
     core::{upgrade, ConnectedPoint, Endpoint},
     identify::Info as IdentifyInfo,
-    identity::ed25519,
     kad::{record::Key as KademliaKey, Record},
     multiaddr::{self, Multiaddr},
     swarm::{
@@ -90,7 +89,7 @@ use sc_utils::mpsc::{tracing_unbounded, TracingUnboundedReceiver, TracingUnbound
 use sp_runtime::traits::Block as BlockT;
 
 pub use behaviour::{InboundFailure, OutboundFailure, ResponseFailure};
-pub use libp2p::identity::{DecodingError, Keypair, PublicKey};
+pub use libp2p_identity::{DecodingError, Keypair, PublicKey};
 pub use metrics::NotificationMetrics;
 pub use protocol::NotificationsSink;
 use std::{
@@ -286,8 +285,7 @@ where
         let local_peer_id = local_public.to_peer_id();
 
         // Convert to libp2p types.
-        let local_identity: ed25519::Keypair = local_identity.into();
-        let local_public: ed25519::PublicKey = local_public.into();
+        let local_public: PublicKey = local_public.into();
         let local_peer_id: PeerId = local_peer_id.into();
 
         network_config.boot_nodes = network_config

@@ -34,11 +34,11 @@ use libp2p::{
     connection_limits::ConnectionLimits,
     core::Multiaddr,
     identify::Info as IdentifyInfo,
-    identity::PublicKey,
     kad::{Record, RecordKey},
     swarm::NetworkBehaviour,
     PeerId, StreamProtocol,
 };
+use libp2p_identity::PublicKey;
 
 use parking_lot::Mutex;
 use sp_runtime::traits::Block as BlockT;

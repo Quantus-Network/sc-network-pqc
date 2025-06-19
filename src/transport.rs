@@ -25,7 +25,7 @@ use libp2p::{
         transport::{Boxed, OptionalTransport},
         upgrade,
     },
-    dns, identity, noise, tcp, websocket, PeerId, Transport, TransportExt,
+    dns, noise, tcp, websocket, PeerId, Transport, TransportExt,
 };
 use std::{sync::Arc, time::Duration};
 
@@ -47,7 +47,7 @@ pub use libp2p::bandwidth::BandwidthSinks;
 /// Returns a `BandwidthSinks` object that allows querying the average bandwidth produced by all
 /// the connections spawned with this transport.
 pub fn build_transport(
-    keypair: identity::Keypair,
+    keypair: libp2p_identity::Keypair,
     memory_only: bool,
     yamux_window_size: Option<u32>,
     yamux_maximum_buffer_size: usize,

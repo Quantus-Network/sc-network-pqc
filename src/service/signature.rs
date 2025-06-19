@@ -20,14 +20,14 @@
 
 //! Signature-related code
 
-pub use libp2p::identity::SigningError;
+pub use libp2p_identity::SigningError;
 
 /// Public key.
-pub struct PublicKey(libp2p::identity::PublicKey);
+pub struct PublicKey(libp2p_identity::PublicKey);
 
 impl PublicKey {
     /// Create new [`PublicKey`].
-    pub fn new(public_key: libp2p::identity::PublicKey) -> Self {
+    pub fn new(public_key: libp2p_identity::PublicKey) -> Self {
         Self(public_key)
     }
 
@@ -43,17 +43,22 @@ impl PublicKey {
 }
 
 /// Keypair.
-pub struct Keypair(libp2p::identity::Keypair);
+pub struct Keypair(libp2p_identity::Keypair);
 
 impl Keypair {
     /// Create new [`Keypair`].
-    pub fn new(keypair: libp2p::identity::Keypair) -> Self {
+    pub fn new(keypair: libp2p_identity::Keypair) -> Self {
         Self(keypair)
     }
 
     /// Generate ed25519 keypair.
     pub fn generate_ed25519() -> Self {
-        Keypair(libp2p::identity::Keypair::generate_ed25519())
+        Keypair(libp2p_identity::Keypair::generate_ed25519())
+    }
+
+    /// Generate Dilithium (Post-Quantum) keypair.
+    pub fn generate_dilithium() -> Self {
+        Keypair(libp2p_identity::Keypair::generate_dilithium())
     }
 
     /// Get [`Keypair`]'s public key.
