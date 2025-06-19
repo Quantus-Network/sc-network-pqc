@@ -855,7 +855,7 @@ impl<B: BlockT + 'static, H: ExHashT, N: NetworkBackend<B, H>> FullNetworkConfig
     /// `PeerStore` is created when `FullNetworkConfig` is initialized so that `PeerStoreHandle`s
     /// can be passed onto notification protocols. `PeerStore` itself should be started only once
     /// and since technically it's not a libp2p task, it should be started with `SpawnHandle` in
-    /// `builder.rs` instead of using the libp2p/litep2p executor in the networking backend. This
+    /// `builder.rs` instead of using the libp2p executor in the networking backend. This
     /// function consumes `PeerStore` and starts its event loop in the appropriate place.
     pub fn take_peer_store(&mut self) -> N::PeerStore {
         self.peer_store
@@ -961,9 +961,6 @@ pub enum NetworkBackendType {
     /// Use libp2p for P2P networking.
     #[default]
     Libp2p,
-
-    /// Use litep2p for P2P networking.
-    Litep2p,
 }
 
 #[cfg(test)]

@@ -952,7 +952,7 @@ where
         let bytes = self.local_identity.sign(msg.as_ref())?;
 
         Ok(Signature {
-            public_key: crate::service::signature::PublicKey::Libp2p(public_key),
+            public_key: crate::service::signature::PublicKey::new(public_key),
             bytes,
         })
     }

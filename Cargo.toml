@@ -109,9 +109,6 @@ features = [
 [dependencies.linked_hash_set]
 version = "0.1.4"
 
-[dependencies.litep2p]
-version = "0.9.4"
-features = ["websocket"]
 
 [dependencies.log]
 version = "0.4.22"
@@ -198,10 +195,7 @@ version = "1.0.64"
 
 [dependencies.tokio]
 version = "1.40.0"
-features = [
-    "macros",
-    "sync",
-]
+features = ["macros", "sync"]
 default-features = true
 
 [dependencies.tokio-stream]
@@ -209,10 +203,7 @@ version = "0.1.14"
 
 [dependencies.unsigned-varint]
 version = "0.7.2"
-features = [
-    "asynchronous_codec",
-    "futures",
-]
+features = ["asynchronous_codec", "futures"]
 
 [dependencies.void]
 version = "1.0.2"
@@ -247,10 +238,7 @@ version = "3.8.1"
 
 [dev-dependencies.tokio]
 version = "1.40.0"
-features = [
-    "macros",
-    "rt-multi-thread",
-]
+features = ["macros", "rt-multi-thread"]
 default-features = true
 
 [dev-dependencies.tokio-test]
@@ -259,6 +247,22 @@ version = "0.4.4"
 [dev-dependencies.tokio-util]
 version = "0.7.8"
 features = ["compat"]
+
+[dev-dependencies.sc-block-builder]
+version = "0.43.0"
+default-features = true
+
+[dev-dependencies.sp-consensus]
+version = "0.41.0"
+default-features = true
+
+[dev-dependencies.sp-crypto-hashing]
+version = "0.1.0"
+default-features = false
+
+#[dev-dependencies.substrate-test-runtime]
+#path = "../backbone/vendor/substrate-test-utils"
+#default-features = false
 
 [build-dependencies.prost-build]
 version = "0.13.2"

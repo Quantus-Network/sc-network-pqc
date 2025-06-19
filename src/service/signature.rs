@@ -23,53 +23,42 @@
 pub use libp2p::identity::SigningError;
 
 /// Public key.
-pub enum PublicKey {
-    /// Litep2p public key.
-    Libp2p(libp2p::identity::PublicKey),
-
-    /// Libp2p public key.
-    Litep2p(litep2p::crypto::PublicKey),
-}
+pub struct PublicKey(libp2p::identity::PublicKey);
 
 impl PublicKey {
+    /// Create new [`PublicKey`].
+    pub fn new(public_key: libp2p::identity::PublicKey) -> Self {
+        Self(public_key)
+    }
+
     /// Protobuf-encode [`PublicKey`].
     pub fn encode_protobuf(&self) -> Vec<u8> {
-        match self {
-            Self::Libp2p(public) => public.encode_protobuf(),
-            Self::Litep2p(public) => public.to_protobuf_encoding(),
-        }
+        self.0.encode_protobuf()
     }
 
     /// Get `PeerId` of the [`PublicKey`].
     pub fn to_peer_id(&self) -> sc_network_types::PeerId {
-        match self {
-            Self::Libp2p(public) => public.to_peer_id().into(),
-            Self::Litep2p(public) => public.to_peer_id().into(),
-        }
+        self.0.to_peer_id().into()
     }
 }
 
 /// Keypair.
-pub enum Keypair {
-    /// Litep2p keypair.
-    Libp2p(libp2p::identity::Keypair),
-
-    /// Libp2p keypair.
-    Litep2p(litep2p::crypto::ed25519::Keypair),
-}
+pub struct Keypair(libp2p::identity::Keypair);
 
 impl Keypair {
+    /// Create new [`Keypair`].
+    pub fn new(keypair: libp2p::identity::Keypair) -> Self {
+        Self(keypair)
+    }
+
     /// Generate ed25519 keypair.
     pub fn generate_ed25519() -> Self {
-        Keypair::Litep2p(litep2p::crypto::ed25519::Keypair::generate())
+        Keypair(libp2p::identity::Keypair::generate_ed25519())
     }
 
     /// Get [`Keypair`]'s public key.
     pub fn public(&self) -> PublicKey {
-        match self {
-            Keypair::Libp2p(keypair) => PublicKey::Libp2p(keypair.public()),
-            Keypair::Litep2p(keypair) => PublicKey::Litep2p(keypair.public().into()),
-        }
+        PublicKey::new(self.0.public())
     }
 }
 
@@ -95,25 +84,12 @@ impl Signature {
         message: impl AsRef<[u8]>,
         keypair: &Keypair,
     ) -> Result<Self, SigningError> {
-        match keypair {
-            Keypair::Libp2p(keypair) => {
-                let public_key = keypair.public();
-                let bytes = keypair.sign(message.as_ref())?;
+        let public_key = keypair.0.public();
+        let bytes = keypair.0.sign(message.as_ref())?;
 
-                Ok(Signature {
-                    public_key: PublicKey::Libp2p(public_key),
-                    bytes,
-                })
-            }
-            Keypair::Litep2p(keypair) => {
-                let public_key = keypair.public();
-                let bytes = keypair.sign(message.as_ref());
-
-                Ok(Signature {
-                    public_key: PublicKey::Litep2p(public_key.into()),
-                    bytes,
-                })
-            }
-        }
+        Ok(Signature {
+            public_key: PublicKey::new(public_key),
+            bytes,
+        })
     }
 }
