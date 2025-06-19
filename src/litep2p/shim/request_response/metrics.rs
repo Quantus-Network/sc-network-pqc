@@ -24,55 +24,55 @@ use std::time::Duration;
 
 /// Request-response metrics.
 pub struct RequestResponseMetrics {
-	/// Metrics.
-	metrics: Option<Metrics>,
+    /// Metrics.
+    metrics: Option<Metrics>,
 
-	/// Protocol name.
-	protocol: ProtocolName,
+    /// Protocol name.
+    protocol: ProtocolName,
 }
 
 impl RequestResponseMetrics {
-	pub fn new(metrics: Option<Metrics>, protocol: ProtocolName) -> Self {
-		Self { metrics, protocol }
-	}
+    pub fn new(metrics: Option<Metrics>, protocol: ProtocolName) -> Self {
+        Self { metrics, protocol }
+    }
 
-	/// Register inbound request failure to Prometheus
-	pub fn register_inbound_request_failure(&self, reason: &str) {
-		if let Some(metrics) = &self.metrics {
-			metrics
-				.requests_in_failure_total
-				.with_label_values(&[&self.protocol, reason])
-				.inc();
-		}
-	}
+    /// Register inbound request failure to Prometheus
+    pub fn register_inbound_request_failure(&self, reason: &str) {
+        if let Some(metrics) = &self.metrics {
+            metrics
+                .requests_in_failure_total
+                .with_label_values(&[&self.protocol, reason])
+                .inc();
+        }
+    }
 
-	/// Register inbound request success to Prometheus
-	pub fn register_inbound_request_success(&self, serve_time: Duration) {
-		if let Some(metrics) = &self.metrics {
-			metrics
-				.requests_in_success_total
-				.with_label_values(&[&self.protocol])
-				.observe(serve_time.as_secs_f64());
-		}
-	}
+    /// Register inbound request success to Prometheus
+    pub fn register_inbound_request_success(&self, serve_time: Duration) {
+        if let Some(metrics) = &self.metrics {
+            metrics
+                .requests_in_success_total
+                .with_label_values(&[&self.protocol])
+                .observe(serve_time.as_secs_f64());
+        }
+    }
 
-	/// Register inbound request failure to Prometheus
-	pub fn register_outbound_request_failure(&self, reason: &str) {
-		if let Some(metrics) = &self.metrics {
-			metrics
-				.requests_out_failure_total
-				.with_label_values(&[&self.protocol, reason])
-				.inc();
-		}
-	}
+    /// Register inbound request failure to Prometheus
+    pub fn register_outbound_request_failure(&self, reason: &str) {
+        if let Some(metrics) = &self.metrics {
+            metrics
+                .requests_out_failure_total
+                .with_label_values(&[&self.protocol, reason])
+                .inc();
+        }
+    }
 
-	/// Register inbound request success to Prometheus
-	pub fn register_outbound_request_success(&self, duration: Duration) {
-		if let Some(metrics) = &self.metrics {
-			metrics
-				.requests_out_success_total
-				.with_label_values(&[&self.protocol])
-				.observe(duration.as_secs_f64());
-		}
-	}
+    /// Register inbound request success to Prometheus
+    pub fn register_outbound_request_success(&self, duration: Duration) {
+        if let Some(metrics) = &self.metrics {
+            metrics
+                .requests_out_success_total
+                .with_label_values(&[&self.protocol])
+                .observe(duration.as_secs_f64());
+        }
+    }
 }

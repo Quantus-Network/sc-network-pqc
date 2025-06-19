@@ -20,7 +20,7 @@
 
 use futures::StreamExt;
 use litep2p::protocol::libp2p::bitswap::{
-	BitswapEvent, BitswapHandle, BlockPresenceType, Config, ResponseType, WantType,
+    BitswapEvent, BitswapHandle, BlockPresenceType, Config, ResponseType, WantType,
 };
 
 use sc_client_api::BlockBackend;
@@ -32,33 +32,33 @@ use std::{future::Future, pin::Pin, sync::Arc};
 const LOG_TARGET: &str = "sub-libp2p::bitswap";
 
 pub struct BitswapServer<Block: BlockT> {
-	/// Bitswap handle.
-	handle: BitswapHandle,
+    /// Bitswap handle.
+    handle: BitswapHandle,
 
-	/// Blockchain client.
-	client: Arc<dyn BlockBackend<Block> + Send + Sync>,
+    /// Blockchain client.
+    client: Arc<dyn BlockBackend<Block> + Send + Sync>,
 }
 
 impl<Block: BlockT> BitswapServer<Block> {
-	/// Create new [`BitswapServer`].
-	pub fn new(
-		client: Arc<dyn BlockBackend<Block> + Send + Sync>,
-	) -> (Pin<Box<dyn Future<Output = ()> + Send>>, Config) {
-		let (config, handle) = Config::new();
-		let bitswap = Self { client, handle };
+    /// Create new [`BitswapServer`].
+    pub fn new(
+        client: Arc<dyn BlockBackend<Block> + Send + Sync>,
+    ) -> (Pin<Box<dyn Future<Output = ()> + Send>>, Config) {
+        let (config, handle) = Config::new();
+        let bitswap = Self { client, handle };
 
-		(Box::pin(async move { bitswap.run().await }), config)
-	}
+        (Box::pin(async move { bitswap.run().await }), config)
+    }
 
-	async fn run(mut self) {
-		log::debug!(target: LOG_TARGET, "starting bitswap server");
+    async fn run(mut self) {
+        log::debug!(target: LOG_TARGET, "starting bitswap server");
 
-		while let Some(event) = self.handle.next().await {
-			match event {
-				BitswapEvent::Request { peer, cids } => {
-					log::debug!(target: LOG_TARGET, "handle bitswap request from {peer:?} for {cids:?}");
+        while let Some(event) = self.handle.next().await {
+            match event {
+                BitswapEvent::Request { peer, cids } => {
+                    log::debug!(target: LOG_TARGET, "handle bitswap request from {peer:?} for {cids:?}");
 
-					let response: Vec<ResponseType> = cids
+                    let response: Vec<ResponseType> = cids
 						.into_iter()
 						.map(|(cid, want_type)| {
 							let mut hash = Block::Hash::default();
@@ -96,9 +96,9 @@ impl<Block: BlockT> BitswapServer<Block> {
 						})
 						.collect();
 
-					self.handle.send_response(peer, response).await;
-				},
-			}
-		}
-	}
+                    self.handle.send_response(peer, response).await;
+                }
+            }
+        }
+    }
 }
