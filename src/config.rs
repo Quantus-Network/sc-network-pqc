@@ -1009,6 +1009,7 @@ pub enum NetworkBackendType {
     /// Use libp2p for P2P networking.
     #[default]
     Libp2p,
+    Litep2p
 }
 
 #[cfg(test)]
