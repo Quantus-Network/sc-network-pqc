@@ -1009,6 +1009,7 @@ pub enum NetworkBackendType {
     /// Use libp2p for P2P networking.
     #[default]
     Libp2p,
+    /// Not supported, but we leave it here to prevent having to change sc-cli
     Litep2p
 }
 

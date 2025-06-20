@@ -107,11 +107,11 @@ features = [
 ]
 
 [dependencies.libp2p-identity]
-path = "../libp2p-identity-pqc"
+git = "https://github.com/Quantus-Network/libp2p-identity-pqc"
 features = ["dilithium"]
 
 [patch.crates-io]
-libp2p-identity = { path = "../libp2p-identity-pqc", features = ["dilithium"] }
+libp2p-identity = { git = "https://github.com/Quantus-Network/libp2p-identity-pqc" }
 
 [dependencies.linked_hash_set]
 version = "0.1.4"
