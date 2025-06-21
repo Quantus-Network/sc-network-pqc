@@ -244,7 +244,6 @@
 
 mod behaviour;
 mod bitswap;
-mod litep2p;
 mod protocol;
 
 #[cfg(test)]
@@ -264,30 +263,29 @@ pub mod transport;
 pub mod types;
 pub mod utils;
 
-pub use crate::litep2p::Litep2pNetworkBackend;
 pub use event::{DhtEvent, Event};
 #[doc(inline)]
 pub use request_responses::{Config, IfDisconnected, RequestFailure};
 pub use sc_network_common::{
-	role::{ObservedRole, Roles},
-	types::ReputationChange,
+    role::{ObservedRole, Roles},
+    types::ReputationChange,
 };
 pub use sc_network_types::{
-	multiaddr::{self, Multiaddr},
-	PeerId,
+    multiaddr::{self, Multiaddr},
+    PeerId,
 };
 pub use service::{
-	metrics::NotificationMetrics,
-	signature::Signature,
-	traits::{
-		KademliaKey, MessageSink, NetworkBackend, NetworkBlock, NetworkDHTProvider,
-		NetworkEventStream, NetworkPeers, NetworkRequest, NetworkSigner, NetworkStateInfo,
-		NetworkStatus, NetworkStatusProvider, NetworkSyncForkRequest, NotificationConfig,
-		NotificationSender as NotificationSenderT, NotificationSenderError,
-		NotificationSenderReady, NotificationService,
-	},
-	DecodingError, Keypair, NetworkService, NetworkWorker, NotificationSender, OutboundFailure,
-	PublicKey,
+    metrics::NotificationMetrics,
+    signature::Signature,
+    traits::{
+        KademliaKey, MessageSink, NetworkBackend, NetworkBlock, NetworkDHTProvider,
+        NetworkEventStream, NetworkPeers, NetworkRequest, NetworkSigner, NetworkStateInfo,
+        NetworkStatus, NetworkStatusProvider, NetworkSyncForkRequest, NotificationConfig,
+        NotificationSender as NotificationSenderT, NotificationSenderError,
+        NotificationSenderReady, NotificationService,
+    },
+    DecodingError, Keypair, NetworkService, NetworkWorker, NotificationSender, OutboundFailure,
+    PublicKey,
 };
 pub use types::ProtocolName;
 
