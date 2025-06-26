@@ -12,7 +12,7 @@
 [package]
 edition = "2021"
 name = "sc-network"
-version = "0.48.4"
+version = "0.48.5"
 authors = ["Parity Technologies <admin@parity.io>"]
 build = "build.rs"
 autolib = false

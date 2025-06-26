@@ -5396,7 +5396,7 @@ dependencies = [
 
 [[package]]
 name = "sc-network"
-version = "0.48.4"
+version = "0.48.5"
 dependencies = [
  "array-bytes",
  "assert_matches",
