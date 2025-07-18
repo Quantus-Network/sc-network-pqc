@@ -12,7 +12,7 @@
 [package]
 edition = "2021"
 name = "sc-network"
-version = "0.48.4"
+version = "0.49.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 build = "build.rs"
 autolib = false
@@ -46,6 +46,17 @@ harness = false
 name = "request_response_protocol"
 path = "benches/request_response_protocol.rs"
 harness = false
+
+[dependencies]
+prometheus-endpoint = { version = "0.17.2", default-features = true, package = "substrate-prometheus-endpoint" }
+sc-client-api = { version = "39.0.0", default-features = true }
+sc-network-common = { version = "0.48.0", default-features = true }
+sc-network-types = { version = "0.15.3", default-features = true }
+sc-utils = { version = "18.0.1", default-features = true }
+sp-arithmetic = { version = "26.1.0", default-features = true }
+sp-blockchain = { version = "39.0.0", default-features = true }
+sp-core = { version = "36.1.0", default-features = true }
+sp-runtime = { version = "41.1.0", default-features = true }
 
 [dependencies.array-bytes]
 version = "6.2.2"
@@ -133,32 +144,11 @@ version = "0.2.0"
 [dependencies.pin-project]
 version = "1.1.3"
 
-[dependencies.prometheus-endpoint]
-version = "0.17.1"
-default-features = true
-package = "substrate-prometheus-endpoint"
-
 [dependencies.prost]
 version = "0.12.4"
 
 [dependencies.rand]
 version = "0.8.5"
-default-features = true
-
-[dependencies.sc-client-api]
-version = "38.0.0"
-default-features = true
-
-[dependencies.sc-network-common]
-version = "0.47.0"
-default-features = true
-
-[dependencies.sc-network-types]
-version = "0.15.2"
-default-features = true
-
-[dependencies.sc-utils]
-version = "18.0.0"
 default-features = true
 
 [dependencies.schnellru]
@@ -175,22 +165,6 @@ default-features = true
 
 [dependencies.smallvec]
 version = "1.11.0"
-default-features = true
-
-[dependencies.sp-arithmetic]
-version = "26.0.0"
-default-features = true
-
-[dependencies.sp-blockchain]
-version = "38.0.0"
-default-features = true
-
-[dependencies.sp-core]
-version = "35.0.0"
-default-features = true
-
-[dependencies.sp-runtime]
-version = "40.1.0"
 default-features = true
 
 [dependencies.thiserror]
